@@ -25,7 +25,7 @@ app.post(
 		await Bun.write(`${TEMP_DIR}/font.ttf`, font_file);
 		await Bun.$`hb-subset --face-loader=ft \
             ${TEMP_DIR}/font.ttf \
-            ${subset_text} \
+            --text=${subset_text} \
             -o ${TEMP_DIR}/output.ttf`;
 		let file = Bun.file(`${TEMP_DIR}/output.ttf`);
 
