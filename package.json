@@ -4,13 +4,11 @@
 	"private": true,
 	"scripts": {
 		"start": "bun index.ts",
-		"dev": "bun --hot index.ts"
+		"dev": "bun --hot index.ts",
+		"client": "bun client/index.html"
 	},
 	"devDependencies": {
 		"@types/bun": "latest"
-	},
-	"peerDependencies": {
-		"typescript": "^5"
 	},
 	"dependencies": {
 		"@hono/zod-validator": "^0.7.2",

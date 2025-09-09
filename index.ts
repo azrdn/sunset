@@ -1,13 +1,11 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { serveStatic } from "hono/bun";
+import { cors } from "hono/cors";
 import z from "zod";
+import html from "./client/index.html";
 
-const app = new Hono();
 const TEMP_DIR = ".tmp";
-
-app.use("/*", serveStatic({ root: "./client" }));
-app.post(
+const app = new Hono().post(
 	"/api/v1/subset",
 	zValidator(
 		"form",
@@ -20,6 +18,7 @@ app.post(
 			output: z.enum(["ttf", "woff2"]),
 		}),
 	),
+	cors({ origin: "*" }),
 	async (c) => {
 		const { font_file, subset_text, output } = c.req.valid("form");
 		await Bun.write(`${TEMP_DIR}/font.ttf`, font_file);
@@ -43,8 +42,16 @@ app.post(
 	},
 );
 
-export default {
-	hostname: "0.0.0.0",
+const server = Bun.serve({
 	port: 4321,
 	fetch: app.fetch,
-};
+	routes: { "/": html }
+});
+
+["SIGINT", "SIGTERM"].map((signal) =>
+	process.on(signal, async () => {
+		await server.stop();
+		console.log("Shutting down.");
+		process.exit(0);
+	}),
+);
