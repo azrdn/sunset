@@ -5,7 +5,7 @@ import z from "zod";
 
 const TEMP_DIR = ".tmp";
 const app = new Hono().post(
-	"/api/v1/subset",
+	"/v1/subset",
 	zValidator(
 		"form",
 		z.object({
