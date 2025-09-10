@@ -8,14 +8,13 @@ on:
 jobs:
   deploy:
     name: Deploy
-    environment: prod
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - name: Change API URL
         run: |
-          sed -i "1s/.*/const API_URL='${{ env.API_URL }}'/" client/main.js
+          sed -i "1s|.*|const API_URL='${{ vars.API_URL }}'|" client/main.js
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
