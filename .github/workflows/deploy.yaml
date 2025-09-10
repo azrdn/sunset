@@ -17,9 +17,6 @@ jobs:
         run: |
           sed -i "1s/.*/const API_URL='${{ env.API_URL }}'/" client/main.js
 
-      - name: Install Wrangler
-        run: npm install -g wrangler@latest
-
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
