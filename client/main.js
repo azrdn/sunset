@@ -1,4 +1,4 @@
-const API_URL = `${window.location.origin}/api/v1/subset`;
+const API_URL = "<API URL HERE>";
 
 /** @type { HTMLFormElement } */
 const form = document.querySelector("#form");

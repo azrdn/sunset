@@ -2,7 +2,6 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import z from "zod";
-import html from "./client/index.html";
 
 const TEMP_DIR = ".tmp";
 const app = new Hono().post(
@@ -45,7 +44,6 @@ const app = new Hono().post(
 const server = Bun.serve({
 	port: 4321,
 	fetch: app.fetch,
-	routes: { "/": html }
 });
 
 ["SIGINT", "SIGTERM"].map((signal) =>
