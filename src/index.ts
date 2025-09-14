@@ -4,7 +4,8 @@ import { cors } from "hono/cors";
 import z from "zod";
 
 const TEMP_DIR = ".tmp";
-const app = new Hono().post(
+
+export const app = new Hono().post(
 	"/v1/subset",
 	zValidator(
 		"form",
@@ -25,31 +26,32 @@ const app = new Hono().post(
             ${TEMP_DIR}/font.ttf \
             --text=${subset_text} \
             -o ${TEMP_DIR}/output.ttf`;
-		let file = Bun.file(`${TEMP_DIR}/output.ttf`);
 
+		let file = Bun.file(`${TEMP_DIR}/output.ttf`);
 		if (output === "woff2") {
 			await Bun.$`woff2_compress ${TEMP_DIR}/output.ttf`.quiet();
 			file = Bun.file(`${TEMP_DIR}/output.woff2`);
-			return c.body(await file.arrayBuffer(), 201, {
+			return c.body(await file.arrayBuffer(), 200, {
 				"Content-Type": "font/woff2",
 			});
 		}
-
-		return c.body(await file.arrayBuffer(), 201, {
+		return c.body(await file.arrayBuffer(), 200, {
 			"Content-Type": "font/ttf",
 		});
 	},
 );
 
-const server = Bun.serve({
-	port: 4321,
-	fetch: app.fetch,
-});
+if (import.meta.main) {
+	const server = Bun.serve({
+		port: 4321,
+		fetch: app.fetch,
+	});
 
-["SIGINT", "SIGTERM"].map((signal) =>
-	process.on(signal, async () => {
-		await server.stop();
-		console.log("Shutting down.");
-		process.exit(0);
-	}),
-);
+	["SIGINT", "SIGTERM"].map((signal) =>
+		process.on(signal, async () => {
+			await server.stop();
+			console.log("Shutting down.");
+			process.exit(0);
+		}),
+	);
+}

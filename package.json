@@ -3,9 +3,9 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"start": "bun index.ts",
-		"dev": "bun --hot index.ts",
-		"client": "bun client/index.html"
+		"start": "bun src/index.ts",
+		"dev": "bun --hot src/index.ts",
+		"client": "bun src/client/index.html"
 	},
 	"devDependencies": {
 		"@types/bun": "latest"

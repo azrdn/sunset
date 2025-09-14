@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Change API URL
         run: |
-          sed -i "1s|.*|const API_URL='${{ vars.API_URL }}'|" client/main.js
+          sed -i "1s|.*|const API_URL='${{ vars.API_URL }}'|" src/client/main.js
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
@@ -23,4 +23,4 @@ jobs:
           wranglerVersion: "latest"
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --assets ./client
+          command: deploy --assets src/client

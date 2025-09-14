@@ -1,4 +1,4 @@
-const API_URL = "<API URL HERE>";
+const API_URL = "http://localhost:4321"
 
 /** @type { HTMLFormElement } */
 const form = document.querySelector("#form");
@@ -30,14 +30,14 @@ const send_font = async () => {
 	submit_button.value = "Loading...";
 
 	try {
-		const res = await fetch(API_URL, {
+		const res = await fetch(`${API_URL}/v1/subset`, {
 			method: "POST",
 			body: new FormData(form),
 		});
 		if (!res.ok) throw new Error(res.statusText);
 
 		const filename = font_file.files[0].name.split(".")[0] ?? "font";
-		const format = document.querySelector('input[name="output"]:checked').value;
+		const format = form.querySelector('input[name="output"]:checked').value;
 		download_response(res, filename, format);
 	} catch (err) {
 		form.appendChild(
