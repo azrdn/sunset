@@ -4,6 +4,16 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -15,12 +25,11 @@ jobs:
       - name: Change API URL
         run: |
           sed -i "1s|.*|const API_URL='${{ vars.API_URL }}'|" src/client/main.js
-
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload files
+        uses: actions/upload-pages-artifact@v3
         with:
-          packageManager: npm
-          wranglerVersion: "latest"
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --assets src/client
+          path: './src/client/'
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

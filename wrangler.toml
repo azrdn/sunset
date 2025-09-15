@@ -1,6 +1,0 @@
-name = "sunset"
-compatibility_date = "2025-08-31"
-
-[assets]
-directory = "./src/client"
-not_found_handling = "404-page"
