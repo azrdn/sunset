@@ -5,7 +5,7 @@ import { cors } from "hono/cors";
 import z from "zod";
 
 const TEMP_DIR = ".tmp";
-const app = new Hono().post(
+export const app = new Hono().post(
     "/v1/subset",
     zValidator("form", z.object({
         subset_text: z.string().min(1).max(15_000),
@@ -45,15 +45,14 @@ const app = new Hono().post(
     },
 );
 
-const server = Bun.serve({
+export default {
     fetch: app.fetch,
     port: 4321,
-});
+} satisfies Bun.ServeOptions
 
 ["SIGINT", "SIGTERM"].map((sig) =>
-    process.on(sig, async () => {
-        await server.stop();
+    process.on(sig, () => {
         console.log("Shutting down.");
-        process.exit(0);
+        process.exit();
     }),
 );
