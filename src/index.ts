@@ -1,12 +1,11 @@
 import { rm } from "node:fs/promises";
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
 import z from "zod";
 
 const TEMP_DIR = ".tmp";
-const req_schema = z.object({
+const schema = z.object({
 	subset_text: z.string().min(1).max(15_000),
 	font_file: z.file().mime(["font/otf", "font/ttf", "font/woff", "font/woff2"]),
 	output: z.enum(["ttf", "woff2"]),
@@ -15,10 +14,13 @@ const req_schema = z.object({
 export const app = new Hono().post(
 	"/v1/subset",
 	bodyLimit({ maxSize: 20_480_000 }),
-	zValidator("form", req_schema),
 	cors(),
 	async (c) => {
-		const { font_file, subset_text, output } = c.req.valid("form");
+		const form = await c.req.formData();
+		const parsed = schema.safeParse(Object.fromEntries(form.entries()));
+		if (!parsed.success) return c.body(null, 400);
+
+		const { font_file, subset_text, output } = parsed.data;
 		const req_dir = `${TEMP_DIR}/${Bun.randomUUIDv7()}`;
 
 		await Promise.all([

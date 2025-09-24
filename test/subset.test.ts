@@ -127,7 +127,7 @@ describe("POST /v1/subset", () => {
 		expect(res.status).toBe(400);
 	});
 
-	it("enforces body size limit (returns 413)", async () => {
+	it("enforces body size limit", async () => {
 		const bigFile = new File([new Uint8Array(21_000_000)], "big.ttf", {
 			type: "font/ttf",
 		});
@@ -136,6 +136,6 @@ describe("POST /v1/subset", () => {
 			body: form({ subset_text, font_file: bigFile, output: "ttf" }),
 		});
 
-		expect(res.status).toBe(400);
+		expect(res.status).toBe(413);
 	});
 });
