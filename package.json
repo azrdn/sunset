@@ -5,7 +5,8 @@
 	"scripts": {
 		"start": "bun src/index.ts",
 		"dev": "bun --hot src/index.ts",
-		"client": "bun src/client/index.html"
+		"client": "bun src/client/index.html",
+		"lint": "biome check"
 	},
 	"devDependencies": {
 		"@types/bun": "latest"
