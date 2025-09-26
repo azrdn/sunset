@@ -1,0 +1,12 @@
+{
+    "name": "validator",
+    "private": true,
+    "type": "module",
+    "exports": {
+        "./request": "./request.ts",
+        "./codepoints": "./codepoints.ts"
+    },
+    "dependencies": {
+        "valibot": "^1.1.0"
+    }
+}

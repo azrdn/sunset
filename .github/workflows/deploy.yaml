@@ -24,12 +24,15 @@ jobs:
       - uses: actions/checkout@v5
       - name: Change API URL
         run: |
-          sed -i "1s|.*|const API_URL='${{ vars.API_URL }}'|" src/client/main.js
+          sed -i "3s|.*|const API_URL='${{ vars.API_URL }}'|" pkgs/client/src/main.ts
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
+      - name: Bundle files
+        uses: oven-sh/setup-bun@v2
+      - run: bun run --filter client build
       - name: Upload files
         uses: actions/upload-pages-artifact@v4
         with:
-          path: './src/client/'
+          path: './pkgs/client/dist'
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4

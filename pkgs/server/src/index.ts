@@ -2,7 +2,7 @@ import { rm } from "node:fs/promises"
 import { Hono } from "hono"
 import { bodyLimit } from "hono/body-limit"
 import { cors } from "hono/cors"
-import schema from "./req_schema"
+import validate_req from "validator/request"
 
 const TEMP_DIR = ".tmp"
 const EXIT_SIGNALS = ["SIGINT", "SIGTERM"]
@@ -13,10 +13,10 @@ export const app = new Hono().post(
     cors(),
     async c => {
         const form = await c.req.formData()
-        const parsed = schema.safeParse(Object.fromEntries(form.entries()))
+        const parsed = validate_req(Object.fromEntries(form.entries()))
         if (!parsed.success) return c.body(null, 400)
 
-        const { file, text, unicodes, output } = parsed.data
+        const { file, text, unicodes, output } = parsed.output
         const req_dir = `${TEMP_DIR}/${Bun.randomUUIDv7()}`
 
         await Promise.all([

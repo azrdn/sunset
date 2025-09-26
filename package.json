@@ -1,19 +1,14 @@
 {
-	"name": "sunset",
-	"type": "module",
-	"private": true,
-	"scripts": {
-		"start": "bun src/index.ts",
-		"dev": "bun --hot src/index.ts",
-		"client": "bun src/client/index.html",
-		"lint": "biome check"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "2.2.4",
-		"@types/bun": "latest"
-	},
-	"dependencies": {
-		"hono": "^4.9.8",
-		"zod": "^4.1.11"
-	}
+    "name": "sunset",
+    "devDependencies": {
+        "@biomejs/biome": "2.2.4"
+    },
+    "private": true,
+    "scripts": {
+        "format": "biome check"
+    },
+    "type": "module",
+    "workspaces": [
+        "pkgs/*"
+    ]
 }
