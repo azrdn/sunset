@@ -29,7 +29,7 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Bundle files
         uses: oven-sh/setup-bun@v2
-      - run: bun run --filter client build
+      - run: bun install && bun run --filter client build
       - name: Upload files
         uses: actions/upload-pages-artifact@v4
         with:
