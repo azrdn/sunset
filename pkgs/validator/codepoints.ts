@@ -6,16 +6,12 @@ const HEX_PATTERN = /^[0-9a-f]{1,6}$/i
 export const unicode_schema = v.pipe(
     v.optional(v.pipe(v.string(), v.trim()), ""),
     v.rawTransform(({ dataset, addIssue, NEVER }) => {
-        if (!dataset.typed) return NEVER
+        if (dataset.value === "") return []
 
-        const raw = dataset.value
-        if (raw === "") return []
-
-        const segments = raw
+        const segments = dataset.value
             .split(",")
             .map(segment => segment.trim())
             .filter(segment => segment.length > 0)
-
         if (segments.length === 0) {
             addIssue({
                 message: "Unicode list must contain valid codepoints or ranges",
@@ -24,23 +20,7 @@ export const unicode_schema = v.pipe(
         }
 
         const toHex = (value: number) => value.toString(16).toUpperCase()
-        const formatCodepoint = (value: number) => `U+${toHex(value)}`
-
-        const parseCodepoint = (
-            value: string,
-            {
-                allowPrefix,
-                part,
-            }: { allowPrefix: boolean; part: "single" | "start" | "end" },
-        ) => {
-            const hasPrefix = /^u\+/i.test(value)
-            if (hasPrefix && !allowPrefix) {
-                addIssue({
-                    message: `Range end cannot include "U+" prefix: ${value}`,
-                })
-                return null
-            }
-
+        const parseCodepoint = (value: string, part: "single" | "start" | "end") => {
             const hex = value.replace(/^u\+/i, "")
             if (!HEX_PATTERN.test(hex)) {
                 addIssue({ message: `Invalid unicode ${part} value: ${value}` })
@@ -70,27 +50,18 @@ export const unicode_schema = v.pipe(
 
             if (parts.length === 1) {
                 const [single] = parts as [string]
-                const parsed = parseCodepoint(single, {
-                    allowPrefix: true,
-                    part: "single",
-                })
+                const parsed = parseCodepoint(single, "single")
                 if (!parsed) return NEVER
-                normalised.push(formatCodepoint(parsed.numeric))
+                normalised.push(parsed.hex)
                 continue
             }
 
             if (parts.length === 2) {
                 const [startRaw, endRaw] = parts as [string, string]
-                const start = parseCodepoint(startRaw, {
-                    allowPrefix: true,
-                    part: "start",
-                })
-                if (!start) return NEVER
 
-                const end = parseCodepoint(endRaw, {
-                    allowPrefix: false,
-                    part: "end",
-                })
+                const start = parseCodepoint(startRaw, "start")
+                if (!start) return NEVER
+                const end = parseCodepoint(endRaw, "end")
                 if (!end) return NEVER
 
                 if (start.numeric > end.numeric) {
@@ -99,8 +70,7 @@ export const unicode_schema = v.pipe(
                     })
                     return NEVER
                 }
-
-                normalised.push(`${formatCodepoint(start.numeric)}-${end.hex}`)
+                normalised.push(`${start.hex}-${end.hex}`)
                 continue
             }
 
