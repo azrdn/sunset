@@ -9,17 +9,27 @@ describe("POST /v1/subset -> validation", () => {
     it("fails validation when file omitted", async () => {
         const res = await app.request(url, {
             method: "POST",
-            body: form({ text, output: "ttf" }),
+            body: form({
+                config: JSON.stringify({
+                    text,
+                    output: "ttf",
+                }),
+            }),
         })
 
         expect(res.status).toBe(400)
     })
 
     it("fails validation when output omitted", async () => {
-        const file = await load_font("Roboto-var.ttf")
+        const files = await load_font("Roboto-var.ttf")
         const res = await app.request(url, {
             method: "POST",
-            body: form({ text, file }),
+            body: form({
+                files,
+                config: JSON.stringify({
+                    text,
+                }),
+            }),
         })
 
         expect(res.status).toBe(400)
@@ -31,7 +41,13 @@ describe("POST /v1/subset -> validation", () => {
         })
         const res = await app.request(url, {
             method: "POST",
-            body: form({ text, file: bogus, output: "ttf" }),
+            body: form({
+                files: [bogus],
+                config: JSON.stringify({
+                    text,
+                    output: "ttf",
+                }),
+            }),
         })
 
         expect(res.status).toBe(400)
@@ -43,7 +59,13 @@ describe("POST /v1/subset -> validation", () => {
         })
         const res = await app.request(url, {
             method: "POST",
-            body: form({ text, file: bigFile, output: "ttf" }),
+            body: form({
+                files: [bigFile],
+                config: JSON.stringify({
+                    text,
+                    output: "ttf",
+                }),
+            }),
         })
 
         expect(res.status).toBe(413)

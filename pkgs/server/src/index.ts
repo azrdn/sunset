@@ -13,14 +13,19 @@ export const app = new Hono().post(
     cors(),
     async c => {
         const form = await c.req.formData()
-        const parsed = validate_req(Object.fromEntries(form.entries()))
+        const parsed = validate_req({
+            files: form.getAll("files"),
+            config: form.get("config"),
+        })
         if (!parsed.success) return c.body(null, 400)
 
-        const { file, text, unicodes, output } = parsed.output
         const req_dir = `${TEMP_DIR}/${Bun.randomUUIDv7()}`
+        const { files, config: { output, text, unicodes } } = parsed.output
+        if (files.length > 1) return c.text("Not implemented", 418)
+        if (!files[0]) return c.body(null, 400)
 
         await Promise.all([
-            Bun.write(`${req_dir}/font.sfnt`, file),
+            Bun.write(`${req_dir}/font.sfnt`, files[0]),
             Bun.write(`${req_dir}/text.txt`, text),
             Bun.write(`${req_dir}/unicode_list.txt`, unicodes.join(",")),
         ])

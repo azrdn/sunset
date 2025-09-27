@@ -7,10 +7,10 @@ describe("POST /v1/subset -> TTF outputs", () => {
     const text = "abcdefghijklmnopqrstuvwxyz1234567890"
 
     it("subsets TTF->TTF", async () => {
-        const file = await load_font("Roboto-var.ttf")
+        const files = await load_font("Roboto-var.ttf")
         const res = await app.request(url, {
             method: "POST",
-            body: form({ text, file, output: "ttf" }),
+            body: form({ files, config: JSON.stringify({ text, output: "ttf" }) }),
         })
         const buf = new Uint8Array(await res.arrayBuffer())
 
@@ -20,10 +20,10 @@ describe("POST /v1/subset -> TTF outputs", () => {
     })
 
     it("subsets WOFF->TTF", async () => {
-        const file = await load_font("Pretendard-var.woff")
+        const files = await load_font("Pretendard-var.woff")
         const res = await app.request(url, {
             method: "POST",
-            body: form({ text, file, output: "ttf" }),
+            body: form({ files, config: JSON.stringify({ text, output: "ttf" }) }),
         })
         const buf = new Uint8Array(await res.arrayBuffer())
 
@@ -33,10 +33,10 @@ describe("POST /v1/subset -> TTF outputs", () => {
     })
 
     it("subsets WOFF2->TTF", async () => {
-        const file = await load_font("GoogleSansCode-var.woff2")
+        const files = await load_font("GoogleSansCode-var.woff2")
         const res = await app.request(url, {
             method: "POST",
-            body: form({ text, file, output: "ttf" }),
+            body: form({ files, config: JSON.stringify({ text, output: "ttf" })}),
         })
 
         expect(res.status).toBe(200)

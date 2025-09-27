@@ -10,7 +10,7 @@
 <body>
     <h1>Sunset <div id="sun"></div></h1>
     <p>is a tool to make your font more lightweight <strong>(WIP!!!)</strong></p>
-    <p>(just another wrapperslop of hb-subset from harfbuzz, go give the <a href="https://github.com/harfbuzz/harfbuzz">project</a> a star)</p>
+    <p>(just another wrapperslop of hb-subset from <a href="https://github.com/harfbuzz/harfbuzz">harfbuzz</a>, go give the project a star)</p>
     <details>
         <summary>How?</summary>
         ur mom
@@ -18,14 +18,14 @@
     <form id="form" method="post" autocomplete="off">
         <fieldset>
             <label for="font-file">Font file:</label>
-            <input type="file" id="font-file" accept=".ttf,.otf,.woff,.woff2" name="file" required>
+            <input type="file" id="font-file" accept=".ttf,.otf,.woff,.woff2" name="file" required multiple>
             <p>
                 <label for="font-text">Text:</label>
-                <textarea name="text" id="font-text" placeholder="abcdefgHIJKLMNO"></textarea>
+                <textarea name="text" id="subset-text" placeholder="abcdefgHIJKLMNO"></textarea>
             </p>
             <p>
-                <label for="unicodes">Unicode codepoints (comma-separated, case-insensitive, supports ranges):</label>
-                <textarea name="unicodes" id="unicodes" placeholder="FF, U+0000, 00-7f, U+0-7F"></textarea>
+                <label for="unicodes">Unicode codepoints (comma-separated, supports ranges):</label>
+                <textarea name="unicodes" id="unicodes" placeholder="FF, U+0D9E, 00-7f, U+0-7F"></textarea>
             </p>
             <p>
                 Output format:

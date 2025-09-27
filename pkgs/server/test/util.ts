@@ -10,10 +10,18 @@ export async function load_font(filename: string): Promise<File> {
     return new File([await file.arrayBuffer()], filename, { type })
 }
 
-export function form(object: Record<string, string | Blob>) {
+type FormValues = Record<string, string | string[] | Blob | Blob[]>
+export const form = (object: FormValues) => {
     const form = new FormData()
-    for (const [k, v] of Object.entries<string | Blob>(object)) {
-        form.append(k, v)
+    const entries = Object.entries(object)
+
+    for (const [k, v] of entries) {
+        if (typeof v === "string" || v instanceof Blob) {
+            form.append(k, v)
+            continue
+        }
+
+        if (Array.isArray(v)) for (const i of v) form.append(k, i)
     }
     return form
 }
