@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - pkgs/client/**
+      - pkgs/validator/**
   workflow_dispatch:
 
 permissions:
