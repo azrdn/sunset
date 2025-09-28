@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { app } from "../src/index"
-import { form, load_font } from "./util"
+import { form, load_font } from "./utils"
 
 describe("POST /v1/subset -> WOFF2 outputs", () => {
     const url = "v1/subset"

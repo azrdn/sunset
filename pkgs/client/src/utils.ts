@@ -4,18 +4,15 @@ export const select = <T = Element>(selector: string): T => {
     return el as T
 }
 
-type FormValues = Record<string, string | string[] | Blob | Blob[] | FileList>
-const formdata_maker = (object: FormValues) => {
+const formdata_maker = (object: Record<string, string | Blob | Blob[]>) => {
     const form = new FormData()
-    const entries = Object.entries(object)
 
-    for (const [key, val] of entries) {
+    for (const [key, val] of Object.entries(object)) {
         if (typeof val === "string" || val instanceof Blob) {
             form.append(key, val)
             continue
         }
-        const items = val instanceof FileList ? Array.from(val) : val
-        for (const item of items) form.append(key, item)
+        for (const item of Array.from(val)) form.append(key, item)
     }
     return form
 }
