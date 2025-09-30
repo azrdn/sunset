@@ -10,11 +10,11 @@ export const select = <T = Element>(selector: string): T => {
 
 /** taken from https://stackoverflow.com/a/18650828  */
 export const format_bytes = (bytes: number, decimals = 2) => {
-    if (!+bytes) return '0 Bytes'
+    if (!+bytes) return "0 Bytes"
 
     const k = 1024
     const dm = decimals < 0 ? 0 : decimals
-    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+    const sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"]
 
     const i = Math.max(0, Math.floor(Math.log(bytes) / Math.log(k)))
 
@@ -34,13 +34,16 @@ export const formdata_maker = (object: Record<string, string | Blob | Blob[]>) =
     return form
 }
 
-export const download_res = async (resp: Response, fname: string, fmt: string) => {
+export const download_res = async (resp: Response) => {
+    const filename = resp.headers.get("content-disposition")?.split("filename=")[1]
+    console.log(filename)
+
     const blob = await resp.blob()
     const temp_url = URL.createObjectURL(blob)
     const a = document.createElement("a")
 
     a.href = temp_url
-    a.download = `${fname}.${fmt}`
+    a.download = filename ?? "download"
 
     document.body.appendChild(a).click()
     URL.revokeObjectURL(temp_url)

@@ -49,10 +49,7 @@ const send_font = async () => {
             }),
         })
         if (!res.ok) throw new Error(res.statusText)
-        if (!fonts.files) throw new Error()
-
-        const filename = fonts.files[0]?.name.split(".")[0] ?? "font"
-        download_res(res, filename, output.value)
+        download_res(res)
     } catch (err) {
         if (!(err instanceof Error)) throw new Error("Wacky shit happened")
 

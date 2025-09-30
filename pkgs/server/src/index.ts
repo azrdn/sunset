@@ -10,7 +10,7 @@ const EXIT_SIGNALS = ["SIGINT", "SIGTERM"]
 export const app = new Hono().post(
     "/v1/subset",
     bodyLimit({ maxSize: 20_480_000 }),
-    cors(),
+    cors({ origin: "*", exposeHeaders: ["*"] }),
     async c => {
         const form = await c.req.formData()
         const parsed = validate_req({
@@ -44,17 +44,19 @@ export const app = new Hono().post(
 
         if (config.output === "woff2") {
             await Promise.all(
-                file_names.map(
-                    name => Bun.$`woff2_compress ${req_dir}/out/${name}.ttf`.quiet(),
+                file_names.map(name =>
+                    Bun.$`woff2_compress ${req_dir}/out/${name}.ttf`.quiet(),
                 ),
             )
         }
 
         const ext = config.output === "woff2" ? "woff2" : "ttf"
+        let file_name = `${file_names[0]}.${ext}`
         let out_path = `${req_dir}/out/${file_names[0]}.${ext}`
         let content_type = config.output === "woff2" ? "font/woff2" : "font/ttf"
 
         if (files.length > 1) {
+            file_name = `${req_id}.zip`
             out_path = `${req_dir}/${req_id}.zip`
             content_type = "application/zip"
 
@@ -64,7 +66,10 @@ export const app = new Hono().post(
 
         const buffer = await Bun.file(out_path).arrayBuffer()
         await rm(req_dir, { recursive: true })
-        return c.body(buffer, 200, { "Content-Type": content_type })
+        return c.body(buffer, 200, {
+            "Content-Type": content_type,
+            "Content-Disposition": `attachment; filename=${file_name}`,
+        })
     },
 )
 
