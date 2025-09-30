@@ -36,7 +36,7 @@ describe("POST /v1/subset -> TTF outputs", () => {
         const files = await load_font("GoogleSansCode-var.woff2")
         const res = await app.request(url, {
             method: "POST",
-            body: form({ files, config: JSON.stringify({ text, output: "ttf" })}),
+            body: form({ files, config: JSON.stringify({ text, output: "ttf" }) }),
         })
 
         expect(res.status).toBe(200)
