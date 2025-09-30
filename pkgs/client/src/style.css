@@ -54,24 +54,21 @@ textarea {
     font-family: inherit;
 }
 
-input[type="text"],
 input[type="file"],
-textarea {
-    margin: 0.5em 0;
-}
-
-input[type="text"],
 textarea {
     font-family:
         ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
         "DejaVu Sans Mono", monospace;
     display: block;
+    width: 100%;
     padding: 0.5em;
-    border-radius: 0.3em;
+    margin: 0.5em 0;
     outline: none;
+    border: 1px solid gray;
+    border-radius: 0.3em;
 
-    &:invalid {
-        border-color: #ff4c4c;
+    &:user-invalid {
+        border-color: #ff6464;
     }
 }
 
@@ -81,7 +78,6 @@ input[type="submit"] {
 }
 
 textarea {
-    width: 100%;
     field-sizing: content;
     resize: vertical;
 }

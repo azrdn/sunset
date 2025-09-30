@@ -1,10 +1,27 @@
+/**
+ * queryselector but no longer returns with undefined as union,
+ * also errors when element not found.
+ */
 export const select = <T = Element>(selector: string): T => {
     const el = document.querySelector(selector)
     if (!el) throw new Error("Element not found")
     return el as T
 }
 
-const formdata_maker = (object: Record<string, string | Blob | Blob[]>) => {
+/** taken from https://stackoverflow.com/a/18650828  */
+export const format_bytes = (bytes: number, decimals = 2) => {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+
+    const i = Math.max(0, Math.floor(Math.log(bytes) / Math.log(k)))
+
+    return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`
+}
+
+export const formdata_maker = (object: Record<string, string | Blob | Blob[]>) => {
     const form = new FormData()
 
     for (const [key, val] of Object.entries(object)) {
@@ -17,7 +34,7 @@ const formdata_maker = (object: Record<string, string | Blob | Blob[]>) => {
     return form
 }
 
-const download_response = async (resp: Response, fname: string, fmt: string) => {
+export const download_res = async (resp: Response, fname: string, fmt: string) => {
     const blob = await resp.blob()
     const temp_url = URL.createObjectURL(blob)
     const a = document.createElement("a")
@@ -29,5 +46,3 @@ const download_response = async (resp: Response, fname: string, fmt: string) => 
     URL.revokeObjectURL(temp_url)
     a.remove()
 }
-
-export { formdata_maker, download_response }
