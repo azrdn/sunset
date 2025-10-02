@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . .
 WORKDIR /app/pkgs/server
 RUN bun install --production --frozen-lockfile \
-    && bun build --compile --minify --bytecode src/index.ts --outfile sunset
+    && bun build --compile --minify src/index.ts --outfile sunset
 
 FROM alpine:latest
 RUN apk add --no-cache harfbuzz-utils woff2
