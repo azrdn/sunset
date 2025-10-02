@@ -6,10 +6,11 @@ import validate_req from "validator/request"
 
 const TEMP_DIR = ".tmp"
 const EXIT_SIGNALS = ["SIGINT", "SIGTERM"]
+const MAX_REQ_SIZE = parseInt(import.meta.env.MAX_SIZE || "20971520", 10)
 
 export const app = new Hono().post(
     "/v1/subset",
-    bodyLimit({ maxSize: 20_480_000 }),
+    bodyLimit({ maxSize: MAX_REQ_SIZE }),
     cors({ origin: "*", exposeHeaders: ["*"] }),
     async c => {
         const form = await c.req.formData()
@@ -22,7 +23,7 @@ export const app = new Hono().post(
         const { files, config } = parsed.output
         const req_id = Bun.randomUUIDv7()
         const req_dir = `${TEMP_DIR}/${req_id}`
-        const file_names = files.map(file => file.name.split(".")[0] ?? file.name)
+        const file_names = files.map(file => file.name.split(".")[0] || file.name)
 
         await Promise.all([
             ...files.map(file => Bun.write(`${req_dir}/in/${file.name}`, file)),

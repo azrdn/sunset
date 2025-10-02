@@ -25,14 +25,13 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
-      - name: Change API URL
-        run: |
-          sed -i -E "s|^const API_URL\\s*=.*|const API_URL = \"${{ vars.API_URL }}\"|" pkgs/client/src/main.ts
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
       - name: Bundle files
         uses: oven-sh/setup-bun@v2
       - run: bun install && bun run --filter client build
+        env:
+          VITE_API_URL: ${{ vars.API_URL }}
       - name: Upload files
         uses: actions/upload-pages-artifact@v4
         with:

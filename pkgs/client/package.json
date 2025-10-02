@@ -2,11 +2,13 @@
     "name": "client",
     "private": true,
     "scripts": {
-        "dev": "bun src/index.html",
-        "build": "bun build --minify src/index.html --outdir=dist"
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
     },
     "type": "module",
     "dependencies": {
-        "validator": "workspace:*"
+        "validator": "workspace:*",
+        "vite": "npm:rolldown-vite@latest"
     }
 }

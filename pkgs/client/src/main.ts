@@ -1,8 +1,8 @@
 import validate_unicode from "validator/codepoints"
 import { download_res, format_bytes, formdata_maker, select } from "./utils"
 
-const API_URL = "http://localhost:4321"
-const MAX_FILES_SIZE = 20 * 1024 * 1024
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4321"
+const MAX_FILES_SIZE = parseInt(import.meta.env.VITE_MAX_REQ_SIZE || "20971520", 10)
 
 const form = select<HTMLFormElement>("#form")
 const fonts = select<HTMLInputElement>("#font-file")
