@@ -3,7 +3,7 @@ import * as v from "valibot"
 const UNICODE_MAX = 0x10fffd
 const HEX_PATTERN = /^[0-9a-f]{1,6}$/i
 
-export const unicode_schema = v.pipe(
+const unicode_schema = v.pipe(
     v.optional(v.pipe(v.string(), v.trim()), ""),
     v.rawTransform(({ dataset, addIssue, NEVER }) => {
         if (dataset.value === "") return []
@@ -84,4 +84,33 @@ export const unicode_schema = v.pipe(
     }),
 )
 
-export default v.safeParser(unicode_schema)
+const req_schema = v.object({
+    files: v.pipe(
+        v.array(
+            v.pipe(
+                v.file(),
+                v.mimeType(["font/otf", "font/ttf", "font/woff", "font/woff2"]),
+            ),
+        ),
+        v.minLength(1),
+    ),
+    config: v.pipe(
+        v.string(),
+        v.rawTransform(({ dataset, addIssue, NEVER }) => {
+            try {
+                return JSON.parse(dataset.value)
+            } catch {
+                addIssue({ message: "Config must be a valid JSON string" })
+                return NEVER
+            }
+        }),
+        v.object({
+            text: v.optional(v.pipe(v.string(), v.maxLength(15_000)), ""),
+            unicodes: unicode_schema,
+            output: v.picklist(["ttf", "woff2"]),
+        }),
+    ),
+})
+
+export const req_validator = v.safeParser(req_schema)
+export const unicode_validator = v.safeParser(unicode_schema)

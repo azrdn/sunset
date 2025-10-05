@@ -9,6 +9,6 @@
     "type": "module",
     "dependencies": {
         "validator": "workspace:*",
-        "vite": "npm:rolldown-vite@latest"
+        "vite": "^7.1.9"
     }
 }

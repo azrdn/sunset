@@ -5,6 +5,7 @@
     },
     "private": true,
     "scripts": {
+        "dev": "bun run -F \"./pkgs/**\" dev",
         "format": "biome check"
     },
     "type": "module",

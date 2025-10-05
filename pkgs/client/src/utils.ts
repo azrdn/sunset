@@ -34,9 +34,33 @@ export const formdata_maker = (object: Record<string, string | Blob | Blob[]>) =
     return form
 }
 
+/**
+ * converts xhr into a response object
+ * NOTE: only works after the load event has fired.
+ */
+export const convert_res = (xhr: XMLHttpRequest) => {
+    const headers = new Headers()
+    const xhr_headers = xhr.getAllResponseHeaders().trim()
+
+    if (xhr_headers) {
+        for (const line of xhr_headers.split(/\r?\n/)) {
+            const delimiter = line.indexOf(":")
+            if (delimiter === -1) continue
+
+            const name = line.slice(0, delimiter).trim()
+            if (!name) continue
+
+            const value = line.slice(delimiter + 1).trim()
+            headers.append(name, value)
+        }
+    }
+
+    const { response, status, statusText } = xhr
+    return new Response(response, { headers, status, statusText })
+}
+
 export const download_res = async (resp: Response) => {
     const filename = resp.headers.get("content-disposition")?.split("filename=")[1]
-    console.log(filename)
 
     const blob = await resp.blob()
     const temp_url = URL.createObjectURL(blob)

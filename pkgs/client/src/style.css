@@ -74,7 +74,14 @@ textarea {
 
 input[type="submit"] {
     width: 7em;
-    float: right;
+}
+
+.bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
 }
 
 textarea {
