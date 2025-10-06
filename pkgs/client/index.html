@@ -4,28 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="src/style.css">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="favicon.svg" type="image/svg+xml">
     <title>Sunset</title>
 </head>
 <body>
     <h1>Sunset <div id="sun"></div></h1>
     <p>is a tool to make your font more lightweight <strong>(WIP!!!)</strong></p>
-    <p>(just another wrapperslop of hb-subset from <a href="https://github.com/harfbuzz/harfbuzz">harfbuzz</a>, go give the project a star)</p>
+    <p>
+        (just another wrapperslop of hb-subset from
+        <a href="https://github.com/harfbuzz/harfbuzz" target="_blank">
+        harfbuzz</a>, go give the project a star)
+    </p>
     <details>
         <summary>How?</summary>
         ur mom
     </details>
     <form id="form" autocomplete="off">
         <fieldset>
-            <label for="font-file">Font file:</label>
-            <input type="file" id="font-file" accept=".ttf,.otf,.woff,.woff2" name="file" required multiple>
+            <label for="font-file">Font files:</label>
+            <input type="file" id="font-file"
+                accept=".ttf,.otf,.woff,.woff2" name="file" required multiple>
             <p>
                 <label for="subset-text">Text:</label>
-                <textarea name="text" id="subset-text" placeholder="abcdefGHIJKLMNO1234!@#$"></textarea>
+                <textarea
+                    name="text"
+                    id="subset-text"
+                    placeholder="abcdefGHIJKLMNO1234!@#$"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                ></textarea>
             </p>
             <p>
-                <label for="unicodes">Unicode codepoints (comma-separated, supports ranges):</label>
-                <textarea name="unicodes" id="unicodes" placeholder="FF, U+0D9E, 00-7f, U+0-7F"></textarea>
+                <label for="unicodes">
+                    Unicode codepoints (comma-separated, supports ranges):
+                </label>
+                <textarea
+                    name="unicodes"
+                    id="unicodes"
+                    placeholder="FF, U+0D9E, 00-7f, U+0-7F"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                ></textarea>
             </p>
             <p>
                 Output format:
@@ -39,14 +60,13 @@
                 coming soon
             </details>
             <div class="bottom">
-                <progress max="100"></progress>
-                <input id="submit" type="submit" value="Sunset">
+                <progress value="0" max="100"></progress>
+                <input id="submit" type="submit" value="Subset">
             </div>
         </fieldset>
     </form>
     <footer>
-        <p>MIT License</p>
-        <!-- <p>API also <a href="#">available</a></p> -->
+        <p><a href="https://github.com/azrdn/sunset/blob/main/LICENSE" target="_blank">MIT License</a></p>
     </footer>
     <script type="module" src="src/main.ts"></script>
 </body>

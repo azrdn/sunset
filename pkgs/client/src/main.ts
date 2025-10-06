@@ -32,8 +32,7 @@ fonts.onchange = () => {
 const toggle_submitting = (is_submitting: boolean, text: string) => {
     submit_button.disabled = is_submitting
     submit_button.value = text
-    if (is_submitting) progress.value = 0
-    else progress.removeAttribute("value")
+    progress.value = 0
 }
 
 const append_error = (message: string) => {

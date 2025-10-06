@@ -4,25 +4,41 @@
     box-sizing: border-box;
 }
 
-html {
+:root {
     color-scheme: light dark;
+    --c-invalid: #ff6464;
+    --c-alpha: #c81548;
+    --c-beta: #f2ec4f;
+}
+
+html {
+    background-color: light-dark(#c7c7c7, #1a1a1a);
     scrollbar-gutter: stable;
-    background-color: light-dark(#fdfdfd, #222222);
 }
 
 body {
+    line-height: 1.5;
     font-family: system-ui, sans-serif;
-    accent-color: light-dark(#c81548, #f2ec4f);
+    color: light-dark(#272727, #e6e6e6);
+    background-color: light-dark(#fafafa, #2c2c2c);
+    accent-color: light-dark(var(--c-alpha), var(--c-beta));
+    min-height: 100svh;
     max-width: 50em;
-    padding: 0 1.5em;
+    padding: 1.5em;
     margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
 }
 
 #sun {
-    background: linear-gradient(to bottom, #f2ec4f, #c81548);
+    background: linear-gradient(to bottom, var(--c-beta), var(--c-alpha));
+}
+
+a {
+    color: light-dark(var(--c-alpha), var(--c-beta));
 }
 
 h1 {
+    margin: 0 0em 1rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -56,10 +72,8 @@ textarea {
 
 input[type="file"],
 textarea {
-    font-family:
-        ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
-        "DejaVu Sans Mono", monospace;
     display: block;
+    background-color: unset;
     width: 100%;
     padding: 0.5em;
     margin: 0.5em 0;
@@ -68,8 +82,19 @@ textarea {
     border-radius: 0.3em;
 
     &:user-invalid {
-        border-color: #ff6464;
+        border-color: var(--c-invalid);
     }
+}
+
+textarea {
+    font-family:
+    ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+    "DejaVu Sans Mono", monospace;
+}
+
+progress {
+    flex-grow: 1;
+    block-size: 1.5em;
 }
 
 input[type="submit"] {
