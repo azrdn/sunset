@@ -1,4 +1,6 @@
 export async function load_font(filename: string): Promise<File> {
+    // TODO: add opt options argument for the file object
+    // to change the filename and type
     const file = Bun.file(`${import.meta.dir}/fonts/${filename}`)
     let type = "application/octet-stream"
 

@@ -1,10 +1,10 @@
 import { mkdir, rm } from "node:fs/promises"
+import { tmpdir } from "node:os"
 import { Hono } from "hono"
 import { bodyLimit } from "hono/body-limit"
 import { cors } from "hono/cors"
 import { req_validator } from "validator"
 
-const TEMP_DIR = ".tmp"
 const EXIT_SIGNALS = ["SIGINT", "SIGTERM"]
 const MAX_REQ_SIZE = parseInt(import.meta.env.MAX_SIZE || "20971520", 10)
 
@@ -21,7 +21,7 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
 
     const { files, config } = parsed.output
     const req_id = Bun.randomUUIDv7()
-    const req_dir = `${TEMP_DIR}/${req_id}`
+    const req_dir = `${tmpdir()}/sunset-${req_id}`
     const file_names = files.map(file => file.name.split(".")[0] || file.name)
 
     await Promise.all([
@@ -31,37 +31,38 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
         Bun.write(`${req_dir}/unicode_list.txt`, config.unicodes.join(",")),
     ])
 
+    // TODO: handle files without extension or files without name and add tests
+    // e.g "font file" or ".ttf"
+
     await Promise.all(
-        files.map((file, index) => {
-            return Bun.$`hb-subset \
-                --face-loader=ft \
-                --font-file "${req_dir}/in/${file.name}" \
-                --text-file ${req_dir}/text.txt \
-                --unicodes-file ${req_dir}/unicode_list.txt \
-                -o ${req_dir}/out/${file_names[index]}.ttf`
-        }),
+        files.map(
+            (file, index) => Bun.$`hb-subset \
+            --face-loader=ft \
+            --font-file "${req_dir}/in/${file.name}" \
+            --text-file ${req_dir}/text.txt \
+            --unicodes-file ${req_dir}/unicode_list.txt \
+            -o ${req_dir}/out/${file_names[index]}.ttf`,
+        ),
     )
 
-    if (config.output === "woff2") {
-        await Promise.all(
-            file_names.map(name =>
-                Bun.$`woff2_compress ${req_dir}/out/${name}.ttf`.quiet(),
-            ),
+    const ext = config.output
+    if (ext === "woff2") {
+        const conversion_tasks = file_names.map(name =>
+            Bun.$`woff2_compress ${req_dir}/out/${name}.ttf`.quiet(),
         )
+        await Promise.all(conversion_tasks)
     }
 
-    const ext = config.output === "woff2" ? "woff2" : "ttf"
     let file_name = `${file_names[0]}.${ext}`
-    let out_path = `${req_dir}/out/${file_names[0]}.${ext}`
-    let content_type = config.output === "woff2" ? "font/woff2" : "font/ttf"
+    let out_path = `${req_dir}/out/${file_name}`
+    let content_type = `font/${ext}`
 
     if (files.length > 1) {
         file_name = `${req_id}.zip`
-        out_path = `${req_dir}/${req_id}.zip`
+        out_path = `${req_dir}/${file_name}`
         content_type = "application/zip"
 
-        const glob_pttrn = config.output === "woff2" ? "*.woff2" : "*.ttf"
-        await Bun.$`7zz a -tzip ${req_dir}/${req_id} ./${req_dir}/out/${glob_pttrn}`.quiet()
+        await Bun.$`7zz a -tzip ${out_path} ${req_dir}/out/*.${ext}`.quiet()
     }
 
     const buffer = await Bun.file(out_path).arrayBuffer()
