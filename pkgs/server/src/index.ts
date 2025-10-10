@@ -6,14 +6,14 @@ import { cors } from "hono/cors"
 import { req_validator } from "validator"
 
 const EXIT_SIGNALS = ["SIGINT", "SIGTERM"]
-const MAX_REQ_SIZE = parseInt(import.meta.env.MAX_SIZE || "20971520", 10)
+const MAX_REQ_SIZE = parseInt(Bun.env.MAX_SIZE || "20971520", 10)
 
 export const app = new Hono()
 
 app.use("/v1/subset", cors({ origin: "*", exposeHeaders: ["*"] }))
 app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
     const form = await c.req.formData()
-    const parsed = req_validator({
+    const parsed = await req_validator({
         files: form.getAll("files"),
         config: form.get("config"),
     })
@@ -30,9 +30,6 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
         Bun.write(`${req_dir}/text.txt`, config.text),
         Bun.write(`${req_dir}/unicode_list.txt`, config.unicodes.join(",")),
     ])
-
-    // TODO: handle files without extension or files without name and add tests
-    // e.g "font file" or ".ttf"
 
     await Promise.all(
         files.map(
@@ -62,7 +59,7 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
         out_path = `${req_dir}/${file_name}`
         content_type = "application/zip"
 
-        await Bun.$`7zz a -tzip ${out_path} ${req_dir}/out/*.${ext}`.quiet()
+        await Bun.$`7zz a -tzip ${out_path} ${req_dir}/out/{.,}*${ext}`.quiet()
     }
 
     const buffer = await Bun.file(out_path).arrayBuffer()

@@ -2,6 +2,31 @@ import * as v from "valibot"
 
 const UNICODE_MAX = 0x10fffd
 const HEX_PATTERN = /^[0-9a-f]{1,6}$/i
+const MAGIC_BYTES = {
+    TTF: [0x00, 0x01, 0x00, 0x00, 0x00],
+    OTF: [0x4f, 0x54, 0x54, 0x4f],
+    WOFF: [0x77, 0x4f, 0x46, 0x46],
+    WOFF2: [0x77, 0x4f, 0x46, 0x32],
+}
+
+const file_schema = v.pipeAsync(
+    v.file(),
+    v.rawTransformAsync(async ({ dataset, addIssue, NEVER }) => {
+        const file_bytes = new Uint8Array(
+            await dataset.value.slice(0, 5).arrayBuffer(),
+        )
+        const is_valid_font = Object.values(MAGIC_BYTES).some(signature =>
+            signature.every((byte, index) => file_bytes[index] === byte),
+        )
+
+        if (!is_valid_font) {
+            addIssue({ message: "File is not a valid font file" })
+            return NEVER
+        }
+
+        return dataset.value
+    }),
+)
 
 const unicode_schema = v.pipe(
     v.optional(v.pipe(v.string(), v.trim()), ""),
@@ -84,16 +109,8 @@ const unicode_schema = v.pipe(
     }),
 )
 
-const req_schema = v.object({
-    files: v.pipe(
-        v.array(
-            v.pipe(
-                v.file(),
-                v.mimeType(["font/otf", "font/ttf", "font/woff", "font/woff2"]),
-            ),
-        ),
-        v.minLength(1),
-    ),
+const req_schema = v.objectAsync({
+    files: v.pipeAsync(v.arrayAsync(file_schema), v.minLength(1)),
     config: v.pipe(
         v.string(),
         v.rawTransform(({ dataset, addIssue, NEVER }) => {
@@ -112,5 +129,6 @@ const req_schema = v.object({
     ),
 })
 
-export const req_validator = v.safeParser(req_schema)
+export const req_validator = v.safeParserAsync(req_schema)
 export const unicode_validator = v.safeParser(unicode_schema)
+export const font_validator = v.safeParserAsync(file_schema)

@@ -1,4 +1,4 @@
-import { unicode_validator } from "validator"
+import { font_validator, unicode_validator } from "validator"
 import * as util from "./utils"
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4321"
@@ -18,13 +18,22 @@ unicodes.oninput = () => {
     unicodes.reportValidity()
 }
 
-fonts.onchange = () => {
+fonts.onchange = async () => {
     let total_size = 0
-    const msg = `Total file size cannot exceed ${util.format_bytes(MAX_FILES_SIZE)}`
-
-    for (const file of fonts.files ?? []) total_size += file.size
-    if (total_size > MAX_FILES_SIZE) fonts.setCustomValidity(msg)
-    else fonts.setCustomValidity("")
+    for (const file of fonts.files ?? []) {
+        total_size += file.size
+        if (total_size > MAX_FILES_SIZE) {
+            fonts.setCustomValidity(
+                `Total file size cannot exceed ${util.format_bytes(MAX_FILES_SIZE)}`,
+            )
+            break
+        }
+        const parsed = await font_validator(file)
+        if (!parsed.success) {
+            fonts.setCustomValidity(parsed.issues[0].message)
+            break
+        } else fonts.setCustomValidity("")
+    }
 
     fonts.reportValidity()
 }
