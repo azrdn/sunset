@@ -1,0 +1,10 @@
+[console]
+depth = 5
+
+[install]
+linker = "isolated"
+minimumReleaseAge = 259200
+minimumReleaseAgeExcludes = ["@types/bun"]
+
+[run]
+shell = "bun"
