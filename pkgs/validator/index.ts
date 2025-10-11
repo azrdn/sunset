@@ -12,19 +12,16 @@ const MAGIC_BYTES = {
 const file_schema = v.pipeAsync(
     v.file(),
     v.rawTransformAsync(async ({ dataset, addIssue, NEVER }) => {
-        const file_bytes = new Uint8Array(
-            await dataset.value.slice(0, 5).arrayBuffer(),
-        )
+        const file = dataset.value
+        const file_bytes = new Uint8Array(await file.slice(0, 5).arrayBuffer())
         const is_valid_font = Object.values(MAGIC_BYTES).some(signature =>
             signature.every((byte, index) => file_bytes[index] === byte),
         )
-
         if (!is_valid_font) {
             addIssue({ message: "File is not a valid font file" })
             return NEVER
         }
-
-        return dataset.value
+        return file
     }),
 )
 
