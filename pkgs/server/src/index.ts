@@ -3,10 +3,12 @@ import { tmpdir } from "node:os"
 import { Hono } from "hono"
 import { bodyLimit } from "hono/body-limit"
 import { cors } from "hono/cors"
+import { HTTPException } from "hono/http-exception"
 import { req_validator } from "validator"
 
 const EXIT_SIGNALS = ["SIGINT", "SIGTERM"]
 const MAX_REQ_SIZE = parseInt(Bun.env.MAX_SIZE || "20971520", 10)
+const IS_DEV = Bun.env.NODE_ENV === "development"
 
 export const app = new Hono()
 
@@ -44,10 +46,11 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
 
     const ext = config.output
     if (ext === "woff2") {
-        const conversion_tasks = file_names.map(name =>
-            Bun.$`woff2_compress ${req_dir}/out/${name}.ttf`.quiet(),
+        await Promise.all(
+            file_names.map(name =>
+                Bun.$`woff2_compress ${req_dir}/out/${name}.ttf`.quiet(),
+            ),
         )
-        await Promise.all(conversion_tasks)
     }
 
     let file_name = `${file_names[0]}.${ext}`
@@ -70,6 +73,14 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
     })
 })
 
+app.onError((err, c) => {
+    if (err instanceof HTTPException) {
+        if (IS_DEV) console.error(err.cause)
+        return err.getResponse()
+    }
+    return c.text("Unknown Error", 500)
+})
+
 EXIT_SIGNALS.map(sig =>
     process.on(sig, () => {
         console.log("Shutting down.")
@@ -80,4 +91,4 @@ EXIT_SIGNALS.map(sig =>
 export default {
     fetch: app.fetch,
     port: 4321,
-} satisfies Bun.ServeOptions
+} satisfies Bun.Serve.Options<null>
