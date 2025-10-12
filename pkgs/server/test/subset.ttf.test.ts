@@ -5,7 +5,7 @@ import { form, load_font } from "./utils"
 const url = "v1/subset"
 const text = "abcdefghijklmnopqrstuvwxyz1234567890"
 
-it("subsets TTF->TTF", async () => {
+it.concurrent("subsets TTF->TTF", async () => {
     const files = await load_font("Roboto-var.ttf")
     const res = await app.request(url, {
         method: "POST",
@@ -18,7 +18,7 @@ it("subsets TTF->TTF", async () => {
     expect(buf.byteLength).toBeGreaterThan(0)
 })
 
-it("subsets WOFF->TTF", async () => {
+it.concurrent("subsets WOFF->TTF", async () => {
     const files = await load_font("Pretendard-var.woff")
     const res = await app.request(url, {
         method: "POST",
@@ -31,7 +31,7 @@ it("subsets WOFF->TTF", async () => {
     expect(buf.byteLength).toBeGreaterThan(0)
 })
 
-it("subsets WOFF2->TTF", async () => {
+it.concurrent("subsets WOFF2->TTF", async () => {
     const files = await load_font("GoogleSansCode-var.woff2")
     const res = await app.request(url, {
         method: "POST",

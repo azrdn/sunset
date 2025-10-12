@@ -4,7 +4,7 @@ import { form, load_font } from "./utils"
 
 const url = "v1/subset"
 
-it("accepts badly formatted, but correct codepoints and ranges", async () => {
+it.concurrent("accepts badly formatted codepoints and ranges", async () => {
     const files = await load_font("Roboto-var.ttf")
     const res = await app.request(url, {
         method: "POST",
@@ -21,7 +21,7 @@ it("accepts badly formatted, but correct codepoints and ranges", async () => {
     expect(res.headers.get("Content-Type")).toBe("font/ttf")
 })
 
-it("rejects out-of-range codepoints (> U+10FFFD)", async () => {
+it.concurrent("rejects out-of-range codepoints (> U+10FFFD)", async () => {
     const files = await load_font("Roboto-var.ttf")
     const res = await app.request(url, {
         method: "POST",
@@ -34,7 +34,7 @@ it("rejects out-of-range codepoints (> U+10FFFD)", async () => {
     expect(res.status).toBe(400)
 })
 
-it("rejects ranges where start > end (e.g., '7F-0')", async () => {
+it.concurrent("rejects ranges where start > end (e.g., '7F-0')", async () => {
     const files = await load_font("Roboto-var.ttf")
     const res = await app.request(url, {
         method: "POST",
@@ -47,7 +47,7 @@ it("rejects ranges where start > end (e.g., '7F-0')", async () => {
     expect(res.status).toBe(400)
 })
 
-it("rejects malformed tokens (non-hex)", async () => {
+it.concurrent("rejects malformed tokens (non-hex)", async () => {
     const files = await load_font("Roboto-var.ttf")
     const res = await app.request(url, {
         method: "POST",

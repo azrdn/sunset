@@ -5,7 +5,7 @@ import { form, load_font } from "./utils"
 const url = "v1/subset"
 const text = "abcdefghijklmnopqrstuvwxyz1234567890"
 
-it("fails validation when file omitted", async () => {
+it.concurrent("fails validation when file omitted", async () => {
     const res = await app.request(url, {
         method: "POST",
         body: form({ config: JSON.stringify({ text, output: "ttf" }) }),
@@ -14,7 +14,7 @@ it("fails validation when file omitted", async () => {
     expect(res.status).toBe(400)
 })
 
-it("fails validation when output omitted", async () => {
+it.concurrent("fails validation when output omitted", async () => {
     const files = await load_font("Roboto-var.ttf")
     const res = await app.request(url, {
         method: "POST",
@@ -24,7 +24,7 @@ it("fails validation when output omitted", async () => {
     expect(res.status).toBe(400)
 })
 
-it("rejects when file's signature doesn't match", async () => {
+it.concurrent("rejects when file's signature doesn't match", async () => {
     const bogus = new File([new Uint8Array([0, 1, 2, 3, 9])], "bogus.bin")
     const res = await app.request(url, {
         method: "POST",
@@ -37,7 +37,7 @@ it("rejects when file's signature doesn't match", async () => {
     expect(res.status).toBe(400)
 })
 
-it("enforces body size limit", async () => {
+it.concurrent("enforces body size limit", async () => {
     const bigFile = new File([new Uint8Array(21_000_000)], "big.ttf", {
         type: "font/ttf",
     })
