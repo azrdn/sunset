@@ -90,6 +90,7 @@ textarea {
     font-family:
         ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
         "DejaVu Sans Mono", monospace;
+    background-color: light-dark(#f0f0f0, #414141);
 }
 
 .options {
