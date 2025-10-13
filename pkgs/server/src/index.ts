@@ -33,11 +33,7 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
         Bun.write(`${req_dir}/unicode_list.txt`, config.unicodes.join(",")),
     ])
 
-    const options: string =
-        config.options.length > 0
-            ? config.options.map(opt => `--${opt}=true`).join(" ")
-            : ""
-
+    const options = config.options.map(opt => `--${opt}=true`).join(" ")
     await Promise.all(
         files.map(
             (file, index) => Bun.$`hb-subset \
