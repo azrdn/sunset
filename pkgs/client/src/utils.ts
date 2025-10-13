@@ -1,11 +1,22 @@
 /**
- * queryselector but no longer returns with undefined as union,
- * also errors when element not found.
+ * queryselector/all but no longer returns with undefined as union,
  */
-export const select = <T = Element>(selector: string): T => {
-    const el = document.querySelector(selector)
-    if (!el) throw new Error("Element not found")
-    return el as T
+export function select<T extends Element = Element>(
+    selector: string,
+    options?: { all?: false },
+): T
+export function select<T extends Element = Element>(
+    selector: string,
+    options: { all: true },
+): NodeListOf<T>
+export function select<T extends Element = Element>(
+    selector: string,
+    { all = false }: { all?: boolean } = {},
+): T | NodeListOf<T> {
+    if (all) return document.querySelectorAll<T>(selector)
+    const node = document.querySelector<T>(selector)
+    if (!node) throw new Error(`Element not found: ${selector}`)
+    return node
 }
 
 /** taken from https://stackoverflow.com/a/18650828  */
@@ -15,7 +26,6 @@ export const format_bytes = (bytes: number, decimals = 2) => {
     const k = 1024
     const dm = decimals < 0 ? 0 : decimals
     const sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"]
-
     const i = Math.max(0, Math.floor(Math.log(bytes) / Math.log(k)))
 
     return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`

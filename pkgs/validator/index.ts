@@ -2,6 +2,22 @@ import * as v from "valibot"
 
 const UNICODE_MAX = 0x10fffd
 const HEX_PATTERN = /^[0-9a-f]{1,6}$/i
+const SUBSET_OPTIONS = [
+    "keep-everything",
+    "no-hinting",
+    "retain-gids",
+    "desubroutine",
+    "name-legacy",
+    "set-overlaps-flag",
+    "notdef-outline",
+    "no-prune-unicode-ranges",
+    "no-layout-closure",
+    "no-bidi-closure",
+    "glyph-names",
+    "passthrough-tables",
+    "preprocess",
+    "optimize",
+]
 const MAGIC_BYTES = {
     TTF: [0x00, 0x01, 0x00, 0x00, 0x00],
     OTF: [0x4f, 0x54, 0x54, 0x4f],
@@ -11,22 +27,17 @@ const MAGIC_BYTES = {
 
 const file_schema = v.pipeAsync(
     v.file(),
-    v.rawTransformAsync(async ({ dataset, addIssue, NEVER }) => {
-        const file = dataset.value
+    v.checkAsync(async file => {
         const file_bytes = new Uint8Array(await file.slice(0, 5).arrayBuffer())
         const is_valid_font = Object.values(MAGIC_BYTES).some(signature =>
             signature.every((byte, index) => file_bytes[index] === byte),
         )
-        if (!is_valid_font) {
-            addIssue({ message: "File is not a valid font file" })
-            return NEVER
-        }
-        return file
-    }),
+        return is_valid_font
+    }, "File is not a valid font file"),
 )
 
 const unicode_schema = v.pipe(
-    v.optional(v.pipe(v.string(), v.trim()), ""),
+    v.pipe(v.string(), v.trim()),
     v.rawTransform(({ dataset, addIssue, NEVER }) => {
         if (dataset.value === "") return []
 
@@ -46,7 +57,7 @@ const unicode_schema = v.pipe(
             const hex = value.replace(/^u\+/i, "")
             if (!HEX_PATTERN.test(hex)) {
                 addIssue({ message: `Invalid unicode ${part} value: ${value}` })
-                return null
+                return NEVER
             }
 
             const numeric = parseInt(hex, 16)
@@ -54,7 +65,7 @@ const unicode_schema = v.pipe(
                 addIssue({
                     message: `Unicode ${part} out of range (<= U+10FFFD): ${value}`,
                 })
-                return null
+                return NEVER
             }
 
             return { numeric, hex: toHex(numeric) }
@@ -82,9 +93,8 @@ const unicode_schema = v.pipe(
                 const [startRaw, endRaw] = parts as [string, string]
 
                 const start = parseCodepoint(startRaw, "start")
-                if (!start) return NEVER
                 const end = parseCodepoint(endRaw, "end")
-                if (!end) return NEVER
+                if (!end || !start) return NEVER
 
                 if (start.numeric > end.numeric) {
                     addIssue({
@@ -97,7 +107,7 @@ const unicode_schema = v.pipe(
             }
 
             addIssue({
-                message: `Unicode segment must be a single value or range: ${segment}`,
+                message: `Unicode segment must be single value or range: ${segment}`,
             })
             return NEVER
         }
@@ -105,6 +115,22 @@ const unicode_schema = v.pipe(
         return normalised
     }),
 )
+
+const config_schema = v.object({
+    text: v.optional(v.pipe(v.string(), v.maxLength(15_000)), ""),
+    unicodes: v.optional(unicode_schema, ""),
+    output: v.picklist(["ttf", "woff2"]),
+    options: v.optional(
+        v.pipe(
+            v.array(v.string()),
+            v.check(
+                opts => opts.every(opt => SUBSET_OPTIONS.includes(opt)),
+                "Options should only contain valid subset options",
+            ),
+        ),
+        [],
+    ),
+})
 
 const req_schema = v.objectAsync({
     files: v.pipeAsync(v.arrayAsync(file_schema), v.minLength(1)),
@@ -118,14 +144,10 @@ const req_schema = v.objectAsync({
                 return NEVER
             }
         }),
-        v.object({
-            text: v.optional(v.pipe(v.string(), v.maxLength(15_000)), ""),
-            unicodes: unicode_schema,
-            output: v.picklist(["ttf", "woff2"]),
-        }),
+        config_schema,
     ),
 })
 
-export const req_validator = v.safeParserAsync(req_schema)
+export const request_parser = v.safeParserAsync(req_schema)
 export const unicode_validator = v.safeParser(unicode_schema)
 export const font_validator = v.safeParserAsync(file_schema)

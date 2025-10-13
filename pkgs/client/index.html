@@ -57,7 +57,64 @@
             </p>
             <details>
                 <summary>Advanced Options</summary>
-                coming soon
+                <div class="options">
+                    <span>
+                        <input type="checkbox" value="keep-everything" class="opts" id="=ke">
+                        <label for="=ke" title="Keep everything by default. Options after this can override the operation.">Keep everything</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="no-hinting" class="opts" id="=nh">
+                        <label for="=nh" title="Whether to drop hints.">No hinting</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="retain-gids" class="opts" id="=rg">
+                        <label for="=rg" title="If set, don't renumber glyph ids in the subset.">Retain GIDS</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="desubroutine" class="opts" id="=ds">
+                        <label for="=ds" title="Remove CFF/CFF2 use of subroutines.">Desubroutine</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="name-legacy" class="opts" id="=nl">
+                        <label for="=nl" title="Keep legacy (non-Unicode) 'name' table entries.">Legacy names</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="set-overlaps-flag" class="opts" id="=sof">
+                        <label for="=sof" title="Set the overlaps flag on each glyph.">Set "overlaps" flag</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="notdef-outline" class="opts" id="=no">
+                        <label for="=no" title="Keep the outline of '.notdef' glyph.">Notdef outline</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="no-prune-unicode-ranges" class="opts" id="=npur">
+                        <label for="=npur" title="Don't change the 'OS/2 ulUnicodeRange*' bits.">No prune unicode ranges</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="no-layout-closure" class="opts" id="=nlc">
+                        <label for="=nlc" title="Don't perform glyph closure for layout substitution (GSUB).">No Layout closure</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="no-bidi-closure" class="opts" id="=nbc">
+                        <label for="=nbc" title="Don't perform bidi closure (adding mirrored variants) for input codepoints.">No BIDI closure</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="glyph-names" class="opts" id="=gn">
+                        <label for="=gn" title="Keep PS glyph names in TrueType-flavored fonts.">Gylph names</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="passthrough-tables" class="opts" id="=pt">
+                        <label for="=pt" title="Do not drop tables that the tool does not know how to subset.">Passthrough tables</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="preprocess" class="opts" id="=pp">
+                        <label for="=pp" title="If set preprocesses the face with the add accelerator option before actually subsetting.">Preprocess</label>
+                    </span>
+                    <span>
+                        <input type="checkbox" value="optimize" class="opts" id="=opz">
+                        <label for="=opz" title="Perform IUP delta optimization on the resulting gvar table's deltas.">Optimize</label>
+                    </span>
+                </div>
             </details>
             <div class="bottom">
                 <progress value="0" max="100"></progress>

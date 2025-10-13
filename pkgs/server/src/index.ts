@@ -4,7 +4,7 @@ import { Hono } from "hono"
 import { bodyLimit } from "hono/body-limit"
 import { cors } from "hono/cors"
 import { HTTPException } from "hono/http-exception"
-import { req_validator } from "validator"
+import { request_parser } from "validator"
 
 const EXIT_SIGNALS = ["SIGINT", "SIGTERM"]
 const MAX_REQ_SIZE = parseInt(Bun.env.MAX_SIZE || "20971520", 10)
@@ -15,11 +15,11 @@ export const app = new Hono()
 app.use("/v1/subset", cors({ origin: "*", exposeHeaders: ["*"] }))
 app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
     const form = await c.req.formData()
-    const parsed = await req_validator({
+    const parsed = await request_parser({
         files: form.getAll("files"),
         config: form.get("config"),
     })
-    if (!parsed.success) return c.body(null, 400)
+    if (!parsed.success) throw new HTTPException(400)
 
     const { files, config } = parsed.output
     const req_id = Bun.randomUUIDv7()
@@ -33,6 +33,11 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
         Bun.write(`${req_dir}/unicode_list.txt`, config.unicodes.join(",")),
     ])
 
+    const options: string =
+        config.options.length > 0
+            ? config.options.map(opt => `--${opt}=true`).join(" ")
+            : ""
+
     await Promise.all(
         files.map(
             (file, index) => Bun.$`hb-subset \
@@ -40,7 +45,7 @@ app.post("/v1/subset", bodyLimit({ maxSize: MAX_REQ_SIZE }), async c => {
             --font-file "${req_dir}/in/${file.name}" \
             --text-file ${req_dir}/text.txt \
             --unicodes-file ${req_dir}/unicode_list.txt \
-            -o ${req_dir}/out/${file_names[index]}.ttf`,
+            ${options} -o ${req_dir}/out/${file_names[index]}.ttf`,
         ),
     )
 

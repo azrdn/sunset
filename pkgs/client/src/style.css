@@ -8,7 +8,7 @@
     color-scheme: light dark;
     --c-invalid: #ff6464;
     --c-alpha: #c81548;
-    --c-beta: #f2ec4f;
+    --c-beta: #fffa6e;
 }
 
 html {
@@ -92,9 +92,15 @@ textarea {
         "DejaVu Sans Mono", monospace;
 }
 
+.options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+    gap: 0.25em 0;
+}
+
 progress {
     flex-grow: 1;
-    block-size: 1.5em;
+    height: 1.5rem;
 }
 
 input[type="submit"] {

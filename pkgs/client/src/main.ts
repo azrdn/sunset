@@ -76,7 +76,8 @@ const request_subset = (body: FormData, progress_el?: HTMLProgressElement) => {
 }
 
 const send_font = async () => {
-    const output = util.select<HTMLInputElement>(".fmt:checked")
+    const output_el = util.select<HTMLInputElement>(".fmt:checked")
+    const opt_els = util.select<HTMLInputElement>(".opts:checked", { all: true })
     const orig_text = submit_button.value
 
     document.querySelector(".error")?.remove()
@@ -85,12 +86,13 @@ const send_font = async () => {
     try {
         const response = await request_subset(
             util.formdata_maker({
+                files: fonts.files ? Array.from(fonts.files) : [],
                 config: JSON.stringify({
                     text: text.value,
                     unicodes: unicodes.value,
-                    output: output.value,
+                    options: Array.from(opt_els).map(el => el.value),
+                    output: output_el.value,
                 }),
-                files: fonts.files ? Array.from(fonts.files) : [],
             }),
             progress,
         )
