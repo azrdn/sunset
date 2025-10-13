@@ -6,21 +6,52 @@
 
 :root {
     color-scheme: light dark;
+    --c-bg: light-dark(#ececec, #1a1a1a);
     --c-invalid: #ff6464;
     --c-alpha: #c81548;
     --c-beta: #fffa6e;
 }
 
 html {
-    background-color: light-dark(#c7c7c7, #1a1a1a);
+    background-color: var(--c-bg);
     scrollbar-gutter: stable;
 }
 
 body {
-    line-height: 1.5;
     font-family: system-ui, sans-serif;
+    margin: 0;
+}
+
+#bg {
+    background-image: linear-gradient(#1a1a1a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    position: fixed;
+    line-height: 1;
+    font-size: 20vh;
+    z-index: -1;
+    overflow: hidden;
+    opacity: 0.15;
+    font-weight: 800;
+    white-space: nowrap;
+
+    div {
+        color: var(--c-bg);
+        -webkit-text-stroke: 4px transparent;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    #bg {
+        background-image: linear-gradient(180deg, var(--c-beta), var(--c-alpha));
+    }
+}
+
+main {
+    line-height: 1.5;
     color: light-dark(#272727, #e6e6e6);
     background-color: light-dark(#fafafa, #2c2c2c);
+    filter: drop-shadow(0 9px 7px rgb(0 0 0 / 0.1));
     accent-color: light-dark(var(--c-alpha), var(--c-beta));
     min-height: 100svh;
     max-width: 50em;
@@ -91,6 +122,22 @@ textarea {
         ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
         "DejaVu Sans Mono", monospace;
     background-color: light-dark(#f0f0f0, #414141);
+}
+
+label {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    gap: 0.5em;
+}
+
+input[type="checkbox"], input[type="radio"] {
+    margin: 0;
+}
+
+.radio-group {
+    display: flex;
+    gap: 0.5em;
 }
 
 .options {

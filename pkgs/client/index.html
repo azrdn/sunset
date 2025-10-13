@@ -1,130 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="src/style.css">
-    <link rel="shortcut icon" href="favicon.svg" type="image/svg+xml">
-    <title>Sunset</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="sunset, a web app to create subset of your fonts, improving page load speed and efficiency">
+  <link rel="stylesheet" href="src/style.css">
+  <link rel="shortcut icon" href="favicon.svg" type="image/svg+xml">
+  <title>Sunset</title>
 </head>
+
 <body>
-    <h1>Sunset <div id="sun"></div></h1>
+  <div id="bg">
+    <div>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz</div>
+    <div>(!@#$%^+=&*!@#$%^+=&*)</div>
+    <div>123456789001234567890</div>
+    <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus nesciunt</div>
+    <div>INPUT_BUFFER = inputBuffer.data.get()</div>
+  </div>
+  <main>
+    <h1>Sunset <div id="sun"></div>
+    </h1>
     <p>is a tool to make your font more lightweight <strong>(WIP!!!)</strong></p>
     <p>
-        (just another wrapperslop of hb-subset from
-        <a href="https://github.com/harfbuzz/harfbuzz" target="_blank">
+      (just another wrapperslop of hb-subset from
+      <a href="https://github.com/harfbuzz/harfbuzz" target="_blank">
         harfbuzz</a>, go give the project a star)
     </p>
     <details>
-        <summary>How?</summary>
-        ur mom
+      <summary>How?</summary>
+      ur mom
     </details>
     <form id="form" autocomplete="off">
-        <fieldset>
-            <label for="font-file">Font files:</label>
-            <input type="file" id="font-file"
-                accept=".ttf,.otf,.woff,.woff2" name="file" required multiple>
-            <p>
-                <label for="subset-text">Text:</label>
-                <textarea
-                    name="text"
-                    id="subset-text"
-                    placeholder="abcdefGHIJKLMNO1234!@#$"
-                    autocorrect="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                ></textarea>
-            </p>
-            <p>
-                <label for="unicodes">
-                    Unicode codepoints (comma-separated, supports ranges):
-                </label>
-                <textarea
-                    name="unicodes"
-                    id="unicodes"
-                    placeholder="FF, U+0D9E, 00-7f, U+0-7F"
-                    autocorrect="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                ></textarea>
-            </p>
-            <p>
-                Output format:
-                <input type="radio" name="output" id="output1" class="fmt" value="ttf" checked>
-                <label for="output1">ttf</label>
-                <input type="radio" name="output" id="output2" class="fmt" value="woff2">
-                <label for="output2">woff2</label>
-            </p>
-            <details>
-                <summary>Advanced Options</summary>
-                <div class="options">
-                    <span>
-                        <input type="checkbox" value="keep-everything" class="opts" id="=ke">
-                        <label for="=ke" title="Keep everything by default. Options after this can override the operation.">Keep everything</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="no-hinting" class="opts" id="=nh">
-                        <label for="=nh" title="Whether to drop hints.">No hinting</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="retain-gids" class="opts" id="=rg">
-                        <label for="=rg" title="If set, don't renumber glyph ids in the subset.">Retain GIDS</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="desubroutine" class="opts" id="=ds">
-                        <label for="=ds" title="Remove CFF/CFF2 use of subroutines.">Desubroutine</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="name-legacy" class="opts" id="=nl">
-                        <label for="=nl" title="Keep legacy (non-Unicode) 'name' table entries.">Legacy names</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="set-overlaps-flag" class="opts" id="=sof">
-                        <label for="=sof" title="Set the overlaps flag on each glyph.">Set "overlaps" flag</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="notdef-outline" class="opts" id="=no">
-                        <label for="=no" title="Keep the outline of '.notdef' glyph.">Notdef outline</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="no-prune-unicode-ranges" class="opts" id="=npur">
-                        <label for="=npur" title="Don't change the 'OS/2 ulUnicodeRange*' bits.">No prune unicode ranges</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="no-layout-closure" class="opts" id="=nlc">
-                        <label for="=nlc" title="Don't perform glyph closure for layout substitution (GSUB).">No Layout closure</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="no-bidi-closure" class="opts" id="=nbc">
-                        <label for="=nbc" title="Don't perform bidi closure (adding mirrored variants) for input codepoints.">No BIDI closure</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="glyph-names" class="opts" id="=gn">
-                        <label for="=gn" title="Keep PS glyph names in TrueType-flavored fonts.">Gylph names</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="passthrough-tables" class="opts" id="=pt">
-                        <label for="=pt" title="Do not drop tables that the tool does not know how to subset.">Passthrough tables</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="preprocess" class="opts" id="=pp">
-                        <label for="=pp" title="If set preprocesses the face with the add accelerator option before actually subsetting.">Preprocess</label>
-                    </span>
-                    <span>
-                        <input type="checkbox" value="optimize" class="opts" id="=opz">
-                        <label for="=opz" title="Perform IUP delta optimization on the resulting gvar table's deltas.">Optimize</label>
-                    </span>
-                </div>
-            </details>
-            <div class="bottom">
-                <progress value="0" max="100"></progress>
-                <input id="submit" type="submit" value="Subset">
-            </div>
-        </fieldset>
+      <fieldset>
+        <label for="font-file">Font files:</label>
+        <input type="file" id="font-file" accept=".ttf,.otf,.woff,.woff2" name="file" required multiple>
+        <p>
+          <label for="subset-text">Text:</label>
+          <textarea name="text" id="subset-text" placeholder="abcdefGHIJKLMNO1234!@#$" autocorrect="off"
+            autocapitalize="off" spellcheck="false"></textarea>
+        </p>
+        <p>
+          <label for="unicodes">
+            Unicode codepoints (comma-separated, supports ranges):
+          </label>
+          <textarea name="unicodes" id="unicodes" placeholder="FF, U+0D9E, 00-7f, U+0-7F" autocorrect="off"
+            autocapitalize="off" spellcheck="false"></textarea>
+        </p>
+        <p class="radio-group">
+          Output format:
+          <label>
+            <input type="radio" name="output" class="fmt" value="ttf" checked>ttf
+          </label>
+          <label>
+            <input type="radio" name="output" class="fmt" value="woff2">woff2
+          </label>
+        </p>
+        <details>
+          <summary>Advanced Options</summary>
+          <div class="options">
+            <label title="Keep everything by default. Options after this can override the operation.">
+              <input name="options" type="checkbox" value="keep-everything" class="opts">Keep everything
+            </label>
+            <label title="Whether to drop hints.">
+              <input name="options" type="checkbox" value="no-hinting" class="opts">No hinting
+            </label>
+            <label title="If set, don't renumber glyph ids in the subset.">
+              <input name="options" type="checkbox" value="retain-gids" class="opts">Retain GIDS
+            </label>
+            <label title="Remove CFF/CFF2 use of subroutines.">
+              <input name="options" type="checkbox" value="desubroutine" class="opts">Desubroutine
+            </label>
+            <label title="Keep legacy (non-Unicode) 'name' table entries.">
+              <input name="options" type="checkbox" value="name-legacy" class="opts">Legacy names
+            </label>
+            <label title="Set the overlaps flag on each glyph.">
+              <input name="options" type="checkbox" value="set-overlaps-flag" class="opts">Set "overlaps" flag
+            </label>
+            <label title="Keep the outline of '.notdef' glyph.">
+              <input name="options" type="checkbox" value="notdef-outline" class="opts">Notdef outline
+            </label>
+            <label title="Don't change the 'OS/2 ulUnicodeRange*' bits.">
+              <input name="options" type="checkbox" value="no-prune-unicode-ranges" class="opts">No prune unicode ranges
+            </label>
+            <label title="Don't perform glyph closure for layout substitution (GSUB).">
+              <input name="options" type="checkbox" value="no-layout-closure" class="opts">No Layout closure
+            </label>
+            <label title="Don't perform bidi closure (adding mirrored variants) for input codepoints.">
+              <input name="options" type="checkbox" value="no-bidi-closure" class="opts">No BIDI closure
+            </label>
+            <label title="Keep PS glyph names in TrueType-flavored fonts.">
+              <input name="options" type="checkbox" value="glyph-names" class="opts">Gylph names
+            </label>
+            <label title="Do not drop tables that the tool does not know how to subset.">
+              <input name="options" type="checkbox" value="passthrough-tables" class="opts">Passthrough tables
+            </label>
+            <label title="If set preprocesses the face with the add accelerator option before actually subsetting.">
+              <input name="options" type="checkbox" value="preprocess" class="opts">Preprocess
+            </label>
+            <label title="Perform IUP delta optimization on the resulting gvar table's deltas.">
+              <input name="options" type="checkbox" value="optimize" class="opts">Optimize
+            </label>
+          </div>
+        </details>
+        <div class="bottom">
+          <progress value="0" max="100"></progress>
+          <input id="submit" type="submit" value="Subset">
+        </div>
+      </fieldset>
     </form>
     <footer>
-        <p><a href="https://github.com/azrdn/sunset/blob/main/LICENSE" target="_blank">MIT License</a></p>
+      <p><a href="https://github.com/azrdn/sunset/blob/main/LICENSE" target="_blank">MIT License</a></p>
     </footer>
     <script type="module" src="src/main.ts"></script>
+  </main>
 </body>
+
 </html>
