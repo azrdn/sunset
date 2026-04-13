@@ -33,7 +33,7 @@ jobs:
         env:
           VITE_API_URL: ${{ vars.API_URL }}
       - name: Upload files
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: "./pkgs/client/dist"
       - name: Deploy to GitHub Pages
